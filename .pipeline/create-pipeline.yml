@@ -80,7 +80,7 @@ parameters:
 
 variables:
   - name: ownerServicePrincipalName
-    value: sp-kcns-sbx-sub
+    value: azure-service-conn
   - name: existingKeyvault
     value: kv-kcns-common
   - name: roleDefinition
@@ -104,7 +104,7 @@ jobs:
       - task: AzurePowerShell@5
         displayName: "Azure PowerShell Task"
         inputs:
-          azureSubscription: sp-kcns-sbx-sub
+          azureSubscription: azure-service-conn
           azurePowerShellVersion: LatestVersion
           scriptPath: $(System.DefaultWorkingDirectory)/create-init-assets.ps1
           scriptArguments: -location "${{ parameters.location }}" `
