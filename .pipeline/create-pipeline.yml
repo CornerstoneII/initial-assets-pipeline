@@ -6,10 +6,10 @@ parameters:
   - name: subscriptionId
     displayName: Subscription ID To Create Initial Assets In?
     type: string
-    default: POC-SUBSCRIPTION
+    default: Visual Studio Enterprise Subscription
     values:
-      - POC-SUBSCRIPTION
-      - DEV-SUBSCRIPTION
+      - Visual Studio Enterprise Subscription
+
   - name: resourceGroupName
     displayName: New/Existing Resource Group Name To Create Initial Assets In?
     type: string

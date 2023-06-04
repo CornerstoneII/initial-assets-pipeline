@@ -22,8 +22,8 @@ param (
 	[Parameter(Mandatory = $false)][boolean]$enableCustomADRoles,
 	[Parameter(Mandatory = $false)][array]$customADRoles
 )
-if ($subscriptionId -eq "SUBSCRIPTION") {
-	$subscriptionId = ""
+if ($subscriptionId -eq "Visual Studio Enterprise Subscription") {
+	$subscriptionId = "Visual Studio Enterprise Subscription"
 }
 
 function Find-GraphPerms {
