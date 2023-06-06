@@ -106,7 +106,7 @@ jobs:
         inputs:
           azureSubscription: azure-service-conn
           azurePowerShellVersion: LatestVersion
-          scriptPath: $(System.DefaultWorkingDirectory)/create-init-assets.ps1
+          scriptPath: $(System.DefaultWorkingDirectory)/create-initial-asset.ps1
           scriptArguments: -location "${{ parameters.location }}" `
             -subscriptionId "${{ parameters.subscriptionId }}" `
             -resourceGroupName "${{ parameters.resourceGroupName }}" `
