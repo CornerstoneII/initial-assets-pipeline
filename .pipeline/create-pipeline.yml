@@ -68,6 +68,11 @@ parameters:
     type: string
     default: kv-storage-key
 
+  - name: roleDefinition
+    displayName: Role Contributor
+    type: string
+    default: Contributor
+
 variables:
   # - name: ownerServicePrincipalName
   #   value: azure-service-conn
