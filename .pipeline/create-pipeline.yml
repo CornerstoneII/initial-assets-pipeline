@@ -23,7 +23,7 @@ parameters:
   - name: yourTenantConfiguredEmailAddress
     displayName: Your Email Address Configured For Sandbox Tenant?
     type: string
-    default: chike.agu@kyndryl.onmicrosoft.com
+    default: oluwaseuniyadi@gmail.com
   - name: storageAccount
     displayName: New Storage Account Name?
     type: string

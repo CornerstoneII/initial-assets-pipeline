@@ -84,12 +84,12 @@ function New-GraphRoleAssignments {
 }
 
 # retrieving the GitPAT from azure keyvault
-$gitPat = Get-AzKeyVaultSecret -VaultName $existingKeyvault -Name "kv-git-pat" -AsPlainText
-$spAppID = Get-AzKeyVaultSecret -VaultName $existingKeyvault -Name "kv-sp-mgmt-app-id" -AsPlainText
-$spObjIdOwnerObjId = Get-AzKeyVaultSecret -VaultName $existingKeyvault -Name "kv-sp-mgmt-object-id" -AsPlainText
-$spSecret = Get-AzKeyVaultSecret -VaultName $existingKeyvault -Name "kv-sp-mgmt-secret" -AsPlainText
-$spSecretCnvtd = ConvertTo-SecureString -String $spSecret -AsPlainText -Force
-$spTenant = Get-AzKeyVaultSecret -VaultName $existingKeyvault -Name "kv-sp-mgmt-tenant" -AsPlainText
+# $gitPat = Get-AzKeyVaultSecret -VaultName $existingKeyvault -Name "kv-git-pat" -AsPlainText
+# $spAppID = Get-AzKeyVaultSecret -VaultName $existingKeyvault -Name "kv-sp-mgmt-app-id" -AsPlainText
+# $spObjIdOwnerObjId = Get-AzKeyVaultSecret -VaultName $existingKeyvault -Name "kv-sp-mgmt-object-id" -AsPlainText
+# $spSecret = Get-AzKeyVaultSecret -VaultName $existingKeyvault -Name "kv-sp-mgmt-secret" -AsPlainText
+# $spSecretCnvtd = ConvertTo-SecureString -String $spSecret -AsPlainText -Force
+# $spTenant = Get-AzKeyVaultSecret -VaultName $existingKeyvault -Name "kv-sp-mgmt-tenant" -AsPlainText
 
 # validate graph api app roles if present
 
