@@ -109,7 +109,7 @@ if ($enableCustomADRoles -and $customADRoles) {
 
 # Log in and switch to supplied subscription
 # $Credential = New-Object -TypeName "System.Management.Automation.PSCredential" -ArgumentList $spAppID, $spSecretCnvtd
-Connect-AzAccount -ServicePrincipal -Credential $Credential -Tenant $spTenant -Subscription $subscriptionId
+# Connect-AzAccount -ServicePrincipal -Credential $Credential -Tenant $spTenant -Subscription $subscriptionId
 
 #$rgNames = "rg-finops-kcl-eastus-001,rg-kcns-blob-0107,rg-kcns-blob-0108" for example
 # Specify a separator to divide the entries into individual rg names
