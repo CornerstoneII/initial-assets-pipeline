@@ -2,16 +2,22 @@
 param (
 	[Parameter(Mandatory = $true)][string]$location,
 	[Parameter(Mandatory = $true)][string]$subscriptionId,
+
 	[Parameter(Mandatory = $true)][string]$resourceGroupName,
 	[Parameter(Mandatory = $true)][string]$servicePrincipalName,
+
 	[Parameter(Mandatory = $true)][string]$roleDefinition,
 	[Parameter(Mandatory = $true)][string]$keyVaultName,
+
 	[Parameter(Mandatory = $true)][string]$storageAccount,
 	[Parameter(Mandatory = $true)][string]$storageAccountContainer,
+
 	[Parameter(Mandatory = $false)][string]$yourTenantConfiguredEmailAddress,
 	[Parameter(Mandatory = $false)][string]$appIDKeyVaultName,
+
 	[Parameter(Mandatory = $false)][string]$secretKeyVaultName,
 	[Parameter(Mandatory = $false)][string]$objectIDKeyVaultName,
+
 	[Parameter(Mandatory = $false)][string]$gitPatKeyVaultName,
 	[Parameter(Mandatory = $false)][string]$storageKeyIDKeyVaultName
 )

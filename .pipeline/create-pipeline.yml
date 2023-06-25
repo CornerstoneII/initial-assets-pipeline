@@ -3,6 +3,7 @@ parameters:
     displayName: Resource Location To Create Initial Assets In?
     type: string
     default: "East US"
+
   - name: subscriptionId
     displayName: Subscription ID To Create Initial Assets In?
     type: string
@@ -67,27 +68,6 @@ parameters:
     type: string
     default: kv-storage-key
 
-  - name: enableCustomAppRoles
-    displayName: Enable Custom Microsoft Graph API Roles
-    type: boolean
-    default: false
-
-  - name: graphAPIRoles
-    displayName: Microsoft Graph API Roles (YAML list)
-    type: object
-    default: ["Application.ReadWrite.All"]
-
-  - name: enableSetPermissionSP
-    displayName: Assign Set Permission to the SP
-    type: boolean
-    default: false
-
-  - name: customADRoles
-    displayName: List of additional AD Roles to give the Service Principal besides Contributor (YAML List)
-    type: object
-    default:
-      ["Security Admin", "Role Based Access Control Administrator (Preview)"]
-
 variables:
   # - name: ownerServicePrincipalName
   #   value: azure-service-conn
@@ -142,3 +122,5 @@ jobs:
             -gitPatKeyVaultName "${{ parameters.gitPatKeyVaultName }}" `
 
             -storageKeyIDKeyVaultName "${{ parameters.storageKeyIDKeyVaultName }}" `
+
+            -roleDefinition "${{ parameters.roleDefinition }}" `
