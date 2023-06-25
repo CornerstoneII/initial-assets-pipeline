@@ -110,7 +110,7 @@ jobs:
           scriptArguments: -location "${{ parameters.location }}" `
             -subscriptionId "${{ parameters.subscriptionId }}" `
             -resourceGroupName "${{ parameters.resourceGroupName }}" `
-            -ownerServicePrincipalName "${{ variables.ownerServicePrincipalName }}" `
+
             -servicePrincipalName "${{ parameters.servicePrincipalName }}" `
             -roleDefinition "${{ variables.roleDefinition }}" `
             -enableCustomGraphRoles $${{ parameters.enableCustomAppRoles }} `
