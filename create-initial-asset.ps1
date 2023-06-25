@@ -3,7 +3,7 @@ param (
 	[Parameter(Mandatory = $true)][string]$location,
 	[Parameter(Mandatory = $true)][string]$subscriptionId,
 	[Parameter(Mandatory = $true)][string]$resourceGroupName,
-	[Parameter(Mandatory = $true)][string]$ownerServicePrincipalName,
+	# [Parameter(Mandatory = $true)][string]$ownerServicePrincipalName,
 	[Parameter(Mandatory = $true)][string]$servicePrincipalName,
 	[Parameter(Mandatory = $true)][string]$roleDefinition,
 	[Parameter(Mandatory = $true)][string]$keyVaultName,
