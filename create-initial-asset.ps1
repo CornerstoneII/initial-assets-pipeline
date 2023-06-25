@@ -26,62 +26,62 @@ if ($subscriptionId -eq "Visual Studio Enterprise Subscription") {
 	$subscriptionId = "Visual Studio Enterprise Subscription"
 }
 
-function Find-GraphPerms {
-	param (
-		[string[]] $roles
-	)
-	$graphAPIPerms = @()
-	foreach ($roleName in $roles) {
-		if ([string]::IsNullOrWhiteSpace($roleName)) {
-			Write-Error -Message "Empty Graph Roles not allowed"
-			Exit 1
-		}
-		$perms = Find-MgGraphPermission $roleName | Where-Object {$_.PermissionType -eq "Application"} | Select-Object -Property Id | ForEach-Object { $_.Id }
-		if ($perms.Count -eq 0) {
-			Write-Error -Message "Could not find the appRole named $roleName"
-			Exit 1
-		}
-		$graphAPIPerms = $graphAPIPerms + $perms
-	}
-	return $graphAPIPerms
-}
+# function Find-GraphPerms {
+# 	param (
+# 		[string[]] $roles
+# 	)
+# 	$graphAPIPerms = @()
+# 	foreach ($roleName in $roles) {
+# 		if ([string]::IsNullOrWhiteSpace($roleName)) {
+# 			Write-Error -Message "Empty Graph Roles not allowed"
+# 			Exit 1
+# 		}
+# 		$perms = Find-MgGraphPermission $roleName | Where-Object {$_.PermissionType -eq "Application"} | Select-Object -Property Id | ForEach-Object { $_.Id }
+# 		if ($perms.Count -eq 0) {
+# 			Write-Error -Message "Could not find the appRole named $roleName"
+# 			Exit 1
+# 		}
+# 		$graphAPIPerms = $graphAPIPerms + $perms
+# 	}
+# 	return $graphAPIPerms
+# }
 
-function Find-CustomADRoles {
-	param (
-		[string[]] $roles
-	)
-	$adRoles = @()
-	foreach ($roleName in $roles) {
-		if ([string]::IsNullOrWhiteSpace($roleName)) {
-			Write-Error -Message "Empty AD Roles not allowed"
-			Exit 1
-		}
-		$foundRole = Get-AzRoleDefinition -Name $roleName
-		if ($foundRole.Count -eq 0) {
-			Write-Error -Message "Could not find AD role named $roleName"
-			Exit 1
-		}
-		$adRoles = $adRoles + $foundRole.Name
-	}
-	return $adRoles
-}
+# function Find-CustomADRoles {
+# 	param (
+# 		[string[]] $roles
+# 	)
+# 	$adRoles = @()
+# 	foreach ($roleName in $roles) {
+# 		if ([string]::IsNullOrWhiteSpace($roleName)) {
+# 			Write-Error -Message "Empty AD Roles not allowed"
+# 			Exit 1
+# 		}
+# 		$foundRole = Get-AzRoleDefinition -Name $roleName
+# 		if ($foundRole.Count -eq 0) {
+# 			Write-Error -Message "Could not find AD role named $roleName"
+# 			Exit 1
+# 		}
+# 		$adRoles = $adRoles + $foundRole.Name
+# 	}
+# 	return $adRoles
+# }
 
-function New-GraphRoleAssignments {
-	param (
-		[string] $spName,
-		[string] $spId,
-		[string[]] $graphPerms
-	)
-	foreach ($appRoleId in $graphPerms) {
-		$params = @{
-			PrincipalId = $spId
-			ResourceId = "abce22f1-733c-4f10-9215-dd8eabd7b1d4"
-			AppRoleId = $appRoleId
-		}
-		Write-Output "Assigning appRole $appRoleId to Service Principal $spName ($spId) ..."
-		New-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $spId -BodyParameter $params
-	}
-}
+# function New-GraphRoleAssignments {
+# 	param (
+# 		[string] $spName,
+# 		[string] $spId,
+# 		[string[]] $graphPerms
+# 	)
+# 	foreach ($appRoleId in $graphPerms) {
+# 		$params = @{
+# 			PrincipalId = $spId
+# 			ResourceId = "abce22f1-733c-4f10-9215-dd8eabd7b1d4"
+# 			AppRoleId = $appRoleId
+# 		}
+# 		Write-Output "Assigning appRole $appRoleId to Service Principal $spName ($spId) ..."
+# 		New-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $spId -BodyParameter $params
+# 	}
+# }
 
 # retrieving the GitPAT from azure keyvault
 # $gitPat = Get-AzKeyVaultSecret -VaultName $existingKeyvault -Name "kv-git-pat" -AsPlainText
@@ -92,20 +92,19 @@ function New-GraphRoleAssignments {
 # $spTenant = Get-AzKeyVaultSecret -VaultName $existingKeyvault -Name "kv-sp-mgmt-tenant" -AsPlainText
 
 # validate graph api app roles if present
+# $graphAPIPerms = @()
+# if ($enableCustomGraphRoles -and $appRoles.Count -gt 0) {
 
-$graphAPIPerms = @()
-if ($enableCustomGraphRoles -and $appRoles.Count -gt 0) {
+# 	Install-Module Microsoft.Graph -Scope CurrentUser
+# 	$response = Invoke-RestMethod "https://login.microsoftonline.com/$spTenant/oauth2/v2.0/token" -Method "POST" -Headers @{ "Content-Type" = "application/x-www-form-urlencoded" } -Body "grant_type=client_credentials&client_id=$spAppID&client_secret=$spSecret&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default"
+# 	Connect-MgGraph -AccessToken $response.access_token
+# 	$graphAPIPerms = Find-GraphPerms -roles $appRoles
 
-	Install-Module Microsoft.Graph -Scope CurrentUser
-	$response = Invoke-RestMethod "https://login.microsoftonline.com/$spTenant/oauth2/v2.0/token" -Method "POST" -Headers @{ "Content-Type" = "application/x-www-form-urlencoded" } -Body "grant_type=client_credentials&client_id=$spAppID&client_secret=$spSecret&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default"
-	Connect-MgGraph -AccessToken $response.access_token
-	$graphAPIPerms = Find-GraphPerms -roles $appRoles
+# }
 
-}
-
-if ($enableCustomADRoles -and $customADRoles) {
-	$customADRoleObjs = Find-CustomADRoles -roles $customADRoles
-}
+# if ($enableCustomADRoles -and $customADRoles) {
+# 	$customADRoleObjs = Find-CustomADRoles -roles $customADRoles
+# }
 
 # Log in and switch to supplied subscription
 # $Credential = New-Object -TypeName "System.Management.Automation.PSCredential" -ArgumentList $spAppID, $spSecretCnvtd
@@ -125,14 +124,12 @@ $splitEachRG = $resourceGroupName.Split($separator, $option)
 $stringHashStore = @()
 
 # Here, you need to filter the input entries collected from the user.
-
 foreach($eachRG in $splitEachRG) {
 	# Convert each of the split rg names to hashtable or dictionary and then assign to a new variable
 	$stringHashStore += "$eachRG"
 }
 
 # This section covers the creation of the resource group for the initial asset creation.
-
 $initialRG = $stringHashStore[0]
 
 $checkInitialRG = Get-AzResourceGroup -Name $initialRG -ErrorAction SilentlyContinue
@@ -189,6 +186,7 @@ if ($null -eq $checkServicePrincipal) {
 $servicePrincipalObjId = $servicePrincipal.Id
 $servicePrincipalAppId = $servicePrincipal.AppId
 Write-Host "SP Obj ID: ${servicePrincipalObjId}, SP App ID: ${servicePrincipalAppId}"
+
 # Convert to secure strings
 $spAppId = ConvertTo-SecureString -String $servicePrincipalAppId -AsPlainText -Force
 $spSecret = ConvertTo-SecureString -String $servicePrincipalSecret -AsPlainText -Force
@@ -198,12 +196,11 @@ $spStrgAcctKey = ConvertTo-SecureString -String $storageAccountKey -AsPlainText 
 
 
 # Add required application MS Graph permissions requested if any
-if ($graphAPIPerms.Count -gt 0) {
-	New-GraphRoleAssignments -spName $servicePrincipalName -spId $servicePrincipalObjId -graphPerms $graphAPIPerms
-}
+# if ($graphAPIPerms.Count -gt 0) {
+# 	New-GraphRoleAssignments -spName $servicePrincipalName -spId $servicePrincipalObjId -graphPerms $graphAPIPerms
+# }
 
 # This section covers the creation of the key-vault for the initial asset creation.
-
 if ($null -eq $checkKeyVault) {
 	# Create A Key Vault Resource
 
