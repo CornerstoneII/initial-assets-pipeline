@@ -1,25 +1,25 @@
 # Parameters
 param (
-	[Parameter(Mandatory = $true)][string]$location,
-	[Parameter(Mandatory = $true)][string]$subscriptionId,
+	[Parameter(Mandatory = $true)][string]$location = "West US",
+	[Parameter(Mandatory = $true)][string]$subscriptionId = "c1480ba0-f03c-4a25-b716-cc0543060476",
 
-	[Parameter(Mandatory = $true)][string]$resourceGroupName,
-	[Parameter(Mandatory = $true)][string]$servicePrincipalName,
+	[Parameter(Mandatory = $true)][string]$resourceGroupName = "rg-eurowings-001,rg-eurowings-002,rg-eurowings-003",
+	[Parameter(Mandatory = $true)][string]$servicePrincipalName = "sp-eurowings-client",
 
-	[Parameter(Mandatory = $true)][string]$roleDefinition,
-	[Parameter(Mandatory = $true)][string]$keyVaultName,
+	[Parameter(Mandatory = $true)][string]$roleDefinition = "Contributor",
+	[Parameter(Mandatory = $true)][string]$keyVaultName = "kv-eurowings-001",
 
-	[Parameter(Mandatory = $true)][string]$storageAccount,
-	[Parameter(Mandatory = $true)][string]$storageAccountContainer,
+	[Parameter(Mandatory = $true)][string]$storageAccount = "stgaccteurowings",
+	[Parameter(Mandatory = $true)][string]$storageAccountContainer = "development",
 
-	[Parameter(Mandatory = $false)][string]$yourTenantConfiguredEmailAddress,
-	[Parameter(Mandatory = $false)][string]$appIDKeyVaultName,
+	[Parameter(Mandatory = $false)][string]$yourTenantConfiguredEmailAddress = "oluwaseuniyadi@gmail.com",
+	[Parameter(Mandatory = $false)][string]$appIDKeyVaultName = "kv-app-id",
 
-	[Parameter(Mandatory = $false)][string]$secretKeyVaultName,
-	[Parameter(Mandatory = $false)][string]$objectIDKeyVaultName,
+	[Parameter(Mandatory = $false)][string]$secretKeyVaultName = "kv-secret",
+	[Parameter(Mandatory = $false)][string]$objectIDKeyVaultName = "kv-obj-id",
 
-	[Parameter(Mandatory = $false)][string]$gitPatKeyVaultName,
-	[Parameter(Mandatory = $false)][string]$storageKeyIDKeyVaultName
+	[Parameter(Mandatory = $false)][string]$gitPatKeyVaultName = "kv-git-pat",
+	[Parameter(Mandatory = $false)][string]$storageKeyIDKeyVaultName = "kv-storage-key"
 )
 if ($subscriptionId -eq "Visual Studio Enterprise Subscription") {
 	$subscriptionId = "Visual Studio Enterprise Subscription"

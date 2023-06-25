@@ -74,12 +74,12 @@ parameters:
     default: Contributor
 
 variables:
-  # - name: ownerServicePrincipalName
-  #   value: azure-service-conn
+  - name: ownerServicePrincipalName
+    value: azure-service-conn
   # - name: existingKeyvault
   #   value: kv-kcns-common
-  - name: roleDefinition
-    value: Contributor
+  # - name: roleDefinition
+  #   value: Contributor
 
 trigger: none
 pr: none
