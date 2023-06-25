@@ -19,7 +19,6 @@ if ($subscriptionId -eq "Visual Studio Enterprise Subscription") {
 	$subscriptionId = "Visual Studio Enterprise Subscription"
 }
 
-
 #$rgNames = "rg-finops-kcl-eastus-001,rg-kcns-blob-0107,rg-kcns-blob-0108" for example
 # Specify a separator to divide the entries into individual rg names
 $separator = ","

@@ -16,62 +16,72 @@ parameters:
     #default: rg-kcns-<AppName>-<Environment>-<Location>-<InstanceCount>
     #default: Takes primary resource group and secondary resource groups e.g rg1,rg2,..
     default: rg-finops-kcl-eastus-001,rg-kcns-blob-0107,rg-kcns-blob-0108
+
   - name: servicePrincipalName
     displayName: New Service Principal Name For Child Pipeline and Service Connection Creation?
     type: string
     default: sp-kcns-<AppName>-<Environment>-<Location>-<InstanceCount>
+
   - name: yourTenantConfiguredEmailAddress
     displayName: Your Email Address Configured For Sandbox Tenant?
     type: string
     default: oluwaseuniyadi@gmail.com
+
   - name: storageAccount
     displayName: New Storage Account Name?
     type: string
     default: stkcns<AppName><InstanceCount>
+
   - name: storageAccountContainer
     displayName: New Storage Account Container Name To Store TF State File In?
     type: string
     default: development
+
   - name: keyVaultName
     displayName: Key vault Name For Child Pipeline Key vault Values?
     type: string
     default: kv-kcns-<AppName>-<Environment>-<Location>-<InstanceCount>
+
   - name: appIDKeyVaultName
     displayName: New Service Principal App ID Key vault Name?
     type: string
     default: kv-app-id
+
   - name: secretKeyVaultName
     displayName: New Service Principal Secret Key vault Name?
     type: string
     default: kv-secret
+
   - name: objectIDKeyVaultName
     displayName: New Service Principal Object ID Key vault Name?
     type: string
     default: kv-obj-id
+
   - name: gitPatKeyVaultName
     displayName: New Service Principal GIT PAT Key vault Name?
     type: string
     default: kv-git-pat
+
   - name: storageKeyIDKeyVaultName
     displayName: New Service Principal Storage Account Key Key vault Name?
     type: string
     default: kv-storage-key
+
   - name: enableCustomAppRoles
     displayName: Enable Custom Microsoft Graph API Roles
     type: boolean
     default: false
+
   - name: graphAPIRoles
     displayName: Microsoft Graph API Roles (YAML list)
     type: object
     default: ["Application.ReadWrite.All"]
+
   - name: enableSetPermissionSP
     displayName: Assign Set Permission to the SP
     type: boolean
     default: false
-  - name: enableCustomADRoles
-    displayName: Enable Adding Extra AD Roles
-    type: boolean
-    default: false
+
   - name: customADRoles
     displayName: List of additional AD Roles to give the Service Principal besides Contributor (YAML List)
     type: object
@@ -108,23 +118,27 @@ jobs:
           azurePowerShellVersion: LatestVersion
           scriptPath: $(System.DefaultWorkingDirectory)/create-initial-asset.ps1
           scriptArguments: -location "${{ parameters.location }}" `
+
             -subscriptionId "${{ parameters.subscriptionId }}" `
+
             -resourceGroupName "${{ parameters.resourceGroupName }}" `
 
             -servicePrincipalName "${{ parameters.servicePrincipalName }}" `
-            -roleDefinition "${{ variables.roleDefinition }}" `
-            -enableCustomGraphRoles $${{ parameters.enableCustomAppRoles }} `
-            -appRoles @("${{ join('","', parameters.graphAPIRoles) }}") `
-            -enableCustomADRoles $${{ parameters.enableCustomADRoles }} `
-            -customADRoles @("${{ join('","', parameters.customADRoles) }}") `
+
             -keyVaultName "${{ parameters.keyVaultName }}" `
+
             -storageAccount "${{ parameters.storageAccount }}" `
+
             -storageAccountContainer "${{ parameters.storageAccountContainer }}" `
+
             -yourTenantConfiguredEmailAddress "${{ parameters.yourTenantConfiguredEmailAddress }}"
+
             -appIDKeyVaultName "${{ parameters.appIDKeyVaultName }}" `
+
             -secretKeyVaultName "${{ parameters.secretKeyVaultName }}" `
+
             -objectIDKeyVaultName "${{ parameters.objectIDKeyVaultName }}" `
-            -existingKeyvault "${{ variables.existingKeyvault }}" `
+
             -gitPatKeyVaultName "${{ parameters.gitPatKeyVaultName }}" `
+
             -storageKeyIDKeyVaultName "${{ parameters.storageKeyIDKeyVaultName }}" `
-            -enableSetPermissionSP $${{ parameters.enableSetPermissionSP }}
