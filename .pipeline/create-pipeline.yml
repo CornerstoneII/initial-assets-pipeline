@@ -79,10 +79,10 @@ parameters:
       ["Security Admin", "Role Based Access Control Administrator (Preview)"]
 
 variables:
-  - name: ownerServicePrincipalName
-    value: azure-service-conn
-  - name: existingKeyvault
-    value: kv-kcns-common
+  # - name: ownerServicePrincipalName
+  #   value: azure-service-conn
+  # - name: existingKeyvault
+  #   value: kv-kcns-common
   - name: roleDefinition
     value: Contributor
 
