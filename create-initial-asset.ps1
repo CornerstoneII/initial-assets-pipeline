@@ -3,7 +3,6 @@ param (
 	[Parameter(Mandatory = $true)][string]$location,
 	[Parameter(Mandatory = $true)][string]$subscriptionId,
 	[Parameter(Mandatory = $true)][string]$resourceGroupName,
-	# [Parameter(Mandatory = $true)][string]$ownerServicePrincipalName,
 	[Parameter(Mandatory = $true)][string]$servicePrincipalName,
 	[Parameter(Mandatory = $true)][string]$roleDefinition,
 	[Parameter(Mandatory = $true)][string]$keyVaultName,
@@ -14,101 +13,12 @@ param (
 	[Parameter(Mandatory = $false)][string]$secretKeyVaultName,
 	[Parameter(Mandatory = $false)][string]$objectIDKeyVaultName,
 	[Parameter(Mandatory = $false)][string]$gitPatKeyVaultName,
-	[Parameter(Mandatory = $false)][string]$existingKeyvault,
-	[Parameter(Mandatory = $false)][string]$storageKeyIDKeyVaultName,
-	[Parameter(Mandatory = $false)][boolean]$enableCustomGraphRoles,
-	[Parameter(Mandatory = $false)][array]$appRoles,
-	[Parameter(Mandatory = $false)][boolean]$enableSetPermissionSP,
-	[Parameter(Mandatory = $false)][boolean]$enableCustomADRoles,
-	[Parameter(Mandatory = $false)][array]$customADRoles
+	[Parameter(Mandatory = $false)][string]$storageKeyIDKeyVaultName
 )
 if ($subscriptionId -eq "Visual Studio Enterprise Subscription") {
 	$subscriptionId = "Visual Studio Enterprise Subscription"
 }
 
-# function Find-GraphPerms {
-# 	param (
-# 		[string[]] $roles
-# 	)
-# 	$graphAPIPerms = @()
-# 	foreach ($roleName in $roles) {
-# 		if ([string]::IsNullOrWhiteSpace($roleName)) {
-# 			Write-Error -Message "Empty Graph Roles not allowed"
-# 			Exit 1
-# 		}
-# 		$perms = Find-MgGraphPermission $roleName | Where-Object {$_.PermissionType -eq "Application"} | Select-Object -Property Id | ForEach-Object { $_.Id }
-# 		if ($perms.Count -eq 0) {
-# 			Write-Error -Message "Could not find the appRole named $roleName"
-# 			Exit 1
-# 		}
-# 		$graphAPIPerms = $graphAPIPerms + $perms
-# 	}
-# 	return $graphAPIPerms
-# }
-
-# function Find-CustomADRoles {
-# 	param (
-# 		[string[]] $roles
-# 	)
-# 	$adRoles = @()
-# 	foreach ($roleName in $roles) {
-# 		if ([string]::IsNullOrWhiteSpace($roleName)) {
-# 			Write-Error -Message "Empty AD Roles not allowed"
-# 			Exit 1
-# 		}
-# 		$foundRole = Get-AzRoleDefinition -Name $roleName
-# 		if ($foundRole.Count -eq 0) {
-# 			Write-Error -Message "Could not find AD role named $roleName"
-# 			Exit 1
-# 		}
-# 		$adRoles = $adRoles + $foundRole.Name
-# 	}
-# 	return $adRoles
-# }
-
-# function New-GraphRoleAssignments {
-# 	param (
-# 		[string] $spName,
-# 		[string] $spId,
-# 		[string[]] $graphPerms
-# 	)
-# 	foreach ($appRoleId in $graphPerms) {
-# 		$params = @{
-# 			PrincipalId = $spId
-# 			ResourceId = "abce22f1-733c-4f10-9215-dd8eabd7b1d4"
-# 			AppRoleId = $appRoleId
-# 		}
-# 		Write-Output "Assigning appRole $appRoleId to Service Principal $spName ($spId) ..."
-# 		New-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $spId -BodyParameter $params
-# 	}
-# }
-
-# retrieving the GitPAT from azure keyvault
-# $gitPat = Get-AzKeyVaultSecret -VaultName $existingKeyvault -Name "kv-git-pat" -AsPlainText
-# $spAppID = Get-AzKeyVaultSecret -VaultName $existingKeyvault -Name "kv-sp-mgmt-app-id" -AsPlainText
-# $spObjIdOwnerObjId = Get-AzKeyVaultSecret -VaultName $existingKeyvault -Name "kv-sp-mgmt-object-id" -AsPlainText
-# $spSecret = Get-AzKeyVaultSecret -VaultName $existingKeyvault -Name "kv-sp-mgmt-secret" -AsPlainText
-# $spSecretCnvtd = ConvertTo-SecureString -String $spSecret -AsPlainText -Force
-# $spTenant = Get-AzKeyVaultSecret -VaultName $existingKeyvault -Name "kv-sp-mgmt-tenant" -AsPlainText
-
-# validate graph api app roles if present
-# $graphAPIPerms = @()
-# if ($enableCustomGraphRoles -and $appRoles.Count -gt 0) {
-
-# 	Install-Module Microsoft.Graph -Scope CurrentUser
-# 	$response = Invoke-RestMethod "https://login.microsoftonline.com/$spTenant/oauth2/v2.0/token" -Method "POST" -Headers @{ "Content-Type" = "application/x-www-form-urlencoded" } -Body "grant_type=client_credentials&client_id=$spAppID&client_secret=$spSecret&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default"
-# 	Connect-MgGraph -AccessToken $response.access_token
-# 	$graphAPIPerms = Find-GraphPerms -roles $appRoles
-
-# }
-
-# if ($enableCustomADRoles -and $customADRoles) {
-# 	$customADRoleObjs = Find-CustomADRoles -roles $customADRoles
-# }
-
-# Log in and switch to supplied subscription
-# $Credential = New-Object -TypeName "System.Management.Automation.PSCredential" -ArgumentList $spAppID, $spSecretCnvtd
-# Connect-AzAccount -ServicePrincipal -Credential $Credential -Tenant $spTenant -Subscription $subscriptionId
 
 #$rgNames = "rg-finops-kcl-eastus-001,rg-kcns-blob-0107,rg-kcns-blob-0108" for example
 # Specify a separator to divide the entries into individual rg names
@@ -160,32 +70,32 @@ if ($null -eq $checkStorageAccount) {
 
 	Write-Host -ForegroundColor Cyan "Creating Storage Account $storageAccount ..."
 	New-AzStorageAccount -ResourceGroupName $initialRG -Name $storageAccount -Location "$location" -SkuName Standard_GRS -Kind StorageV2
-
+	Start-Sleep 10
 	# Create a Storage blob container with Storage account object and container name, with public access as Blob
-
+	$storageAccountObject = Get-AzStorageAccount -ResourceGroupName $initialRG -AccountName $storageAccount
+	$saContainer = New-AzRmStorageContainer -StorageAccount $storageAccountObject -ContainerName $storageAccountContainer -PublicAccess Blob -ErrorAction Stop
+	$storageAccountKey = (Get-AzStorageAccountkey -ResourceGroupName $initialRG -Name $storageAccount)[0].value
 } else {
 	Write-Host -ForegroundColor DarkMagenta "Storage Account $storageAccount already exist !!!"
 }
-$storageAccountObject = Get-AzStorageAccount -ResourceGroupName $initialRG -AccountName $storageAccount
-$saContainer = New-AzRmStorageContainer -StorageAccount $storageAccountObject -ContainerName $storageAccountContainer -PublicAccess Blob -ErrorAction Stop
-$storageAccountKey = (Get-AzStorageAccountkey -ResourceGroupName $initialRG -Name $storageAccount)[0].value
 
-# This section covers the creation of the service principal for the initial asset creation.
+# Creation of the service principal for the initial asset creation.
 if ($null -eq $checkServicePrincipal) {
 
 	Write-Host -ForegroundColor Cyan "Creating Service Principal $ServicePrincipalName ..."
 	$servicePrincipal = New-AzADServicePrincipal -DisplayName $ServicePrincipalName -Role $roleDefinition -Scope $scope
 	$servicePrincipalSecret = $servicePrincipal.PasswordCredentials.SecretText
-
+	Write-Host "SP Obj ID: ${$servicePrincipal.Id}, SP App ID: ${$servicePrincipal.AppId}"
 } else {
 	Write-Host -ForegroundColor DarkMagenta "Service Principal $ServicePrincipalName already exist !!!"
 	$servicePrincipal = $checkServicePrincipal
 	Write-Host "Using existing Service Principal: ${servicePrincipal}"
 	$servicePrincipalSecret = (New-AzADAppCredential -ApplicationId $servicePrincipal.AppId).SecretText
 }
+
 $servicePrincipalObjId = $servicePrincipal.Id
 $servicePrincipalAppId = $servicePrincipal.AppId
-Write-Host "SP Obj ID: ${servicePrincipalObjId}, SP App ID: ${servicePrincipalAppId}"
+# Write-Host "SP Obj ID: ${servicePrincipalObjId}, SP App ID: ${servicePrincipalAppId}"
 
 # Convert to secure strings
 $spAppId = ConvertTo-SecureString -String $servicePrincipalAppId -AsPlainText -Force
@@ -193,12 +103,6 @@ $spSecret = ConvertTo-SecureString -String $servicePrincipalSecret -AsPlainText 
 $spObjId = ConvertTo-SecureString -String $servicePrincipalObjId -AsPlainText -Force
 $spGitPat = ConvertTo-SecureString -String $gitPat -AsPlainText -Force
 $spStrgAcctKey = ConvertTo-SecureString -String $storageAccountKey -AsPlainText -Force
-
-
-# Add required application MS Graph permissions requested if any
-# if ($graphAPIPerms.Count -gt 0) {
-# 	New-GraphRoleAssignments -spName $servicePrincipalName -spId $servicePrincipalObjId -graphPerms $graphAPIPerms
-# }
 
 # This section covers the creation of the key-vault for the initial asset creation.
 if ($null -eq $checkKeyVault) {
@@ -218,15 +122,13 @@ if ($null -eq $checkKeyVault) {
 }
 
 # Set Access policy for owner SP
-#Set-AzKeyVaultAccessPolicy -VaultName $keyVaultName -ObjectId $spObjIdOwnerObjId -PermissionsToSecrets get,list,set -PermissionsToKeys get,list,update -BypassObjectIdValidation
 Set-AzKeyVaultAccessPolicy -VaultName $keyVaultName -ObjectId $spObjIdOwnerObjId -PermissionsToSecrets all -PermissionsToKeys get,list,update -BypassObjectIdValidation
 
-if ($enableSetPermissionSP) {
-	Set-AzKeyVaultAccessPolicy -VaultName $keyVaultName -ObjectId $ServicePrincipalObjId -PermissionsToSecrets get,list,set -PermissionsToKeys get,list -BypassObjectIdValidation
-}else{
-    Set-AzKeyVaultAccessPolicy -VaultName $keyVaultName -ObjectId $ServicePrincipalObjId -PermissionsToSecrets get,list -PermissionsToKeys get,list -BypassObjectIdValidation
-}
-
+# if ($enableSetPermissionSP) {
+# 	Set-AzKeyVaultAccessPolicy -VaultName $keyVaultName -ObjectId $ServicePrincipalObjId -PermissionsToSecrets get,list,set -PermissionsToKeys get,list -BypassObjectIdValidation
+# }else{
+#     Set-AzKeyVaultAccessPolicy -VaultName $keyVaultName -ObjectId $ServicePrincipalObjId -PermissionsToSecrets get,list -PermissionsToKeys get,list -BypassObjectIdValidation
+# }
 
 # Set keyvault keys and values
 Set-AzKeyVaultSecret -VaultName $keyVaultName -Name $appIDKeyVaultName -SecretValue $spAppId
@@ -274,14 +176,6 @@ if ($yourObjectID) {
 	Set-AzKeyVaultAccessPolicy -VaultName $keyVaultName -ObjectId $yourObjectID -PermissionsToSecrets get,list,set -PermissionsToKeys get,list,update -BypassObjectIdValidation
 } else {
 	Write-Host "$yourTenantConfiguredEmailAddress was not found!"
-}
-
-# Add required Active Directory Roles if any
-if ($enableCustomADRoles) {
-	foreach ($roleName in $customADRoleObjs) {
-		Write-Output "Adding role assignment '${roleName}' to ${spObjId} on Resource Group ${initialRG}."
-		New-AzRoleAssignment -ObjectId $servicePrincipalObjId -RoleDefinitionName $roleName -ResourceGroupName $initialRG
-	}
 }
 
 # Summary of what was created:
